@@ -1,0 +1,6 @@
+.vscode/
+__pycache__/
+yolov8n.pt
+
+data/dataset/
+data/features.csv
