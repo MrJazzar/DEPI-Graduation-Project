@@ -1,83 +1,66 @@
-import cv2
-import mediapipe as mp
-from ear import LEFT_EYE, RIGHT_EYE, compute_ear
-from head_pose import get_head_pose
-from gaze import gaze_proxy
-from phone_detector import detect_phone
+"""
+Student Monitoring System -- Entry Point
+========================================
+Run this file to start the real-time multi-person focus monitoring session.
 
-mp_face_mesh = mp.solutions.face_mesh
+Usage:
+    py src/main.py
 
-cap = cv2.VideoCapture(0)
+Press 'q' inside the camera window to end the session and view analytics.
+"""
 
-frame_count = 0
-phone = 0
+import os
+import sys
+from datetime import datetime
 
-with mp_face_mesh.FaceMesh(
-    max_num_faces=1,
-    refine_landmarks=True
-) as face_mesh:
+# ── Fix for Keras 3 / TF 2.16+ compatibility with DeepFace ──────────────────
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
+# ── Make sure src/ sub-packages are importable ───────────────────────────────
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
 
-        frame_count += 1
+from models.face_recognizer import FaceRecognizer
+from models.focus_classifier import FocusClassifier
+from models.phone_detector import PhoneDetector
+from analytics.reporter import SessionReporter
+from monitoring.camera import CameraMonitor
 
-        h, w, _ = frame.shape
 
-        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = face_mesh.process(rgb)
+def build_paths() -> dict:
+    """Return all project-relative paths as an absolute-path dict."""
+    project_root = os.path.dirname(SRC_DIR)
+    return {
+        "model":       os.path.join(project_root, "models", "model.pkl"),
+        "scaler":      os.path.join(project_root, "models", "scaler.pkl"),
+        "embeddings":  os.path.join(project_root, "data",   "processed", "embeddings.pkl"),
+        "landmarker":  os.path.join(project_root, "models", "face_landmarker.task"),
+        "session_dir": os.path.join(project_root, "data",   "processed"),
+    }
 
-        if results.multi_face_landmarks:
 
-            landmarks = results.multi_face_landmarks[0].landmark
+def main() -> None:
+    paths = build_paths()
 
-            # EAR Calculation
-            left_eye = []
-            right_eye = []
+    face_recognizer   = FaceRecognizer(embeddings_path=paths["embeddings"])
+    focus_classifier  = FocusClassifier(model_path=paths["model"], scaler_path=paths["scaler"])
+    phone_detector    = PhoneDetector()
+    reporter          = SessionReporter()
 
-            for idx in LEFT_EYE:
-                lm = landmarks[idx]
-                left_eye.append((lm.x*w, lm.y*h))
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    session_csv = os.path.join(paths["session_dir"], f"session_{timestamp}.csv")
 
-            for idx in RIGHT_EYE:
-                lm = landmarks[idx]
-                right_eye.append((lm.x*w, lm.y*h))
+    monitor = CameraMonitor(
+        face_recognizer=face_recognizer,
+        focus_classifier=focus_classifier,
+        phone_detector=phone_detector,
+        reporter=reporter,
+        landmarker_path=paths["landmarker"],
+        csv_output_path=session_csv,
+    )
+    monitor.run()
 
-            left_ear = compute_ear(left_eye)
-            right_ear = compute_ear(right_eye)
 
-            ear = (left_ear + right_ear)/2
-
-            # Head Pose
-            yaw, pitch, roll = get_head_pose(
-                landmarks,
-                w,
-                h
-            )
-
-            # Gaze
-            gaze = gaze_proxy(landmarks)
-
-            # Phone Detection
-            # run YOLO every 10 frames
-            if frame_count % 10 == 0:
-                phone = detect_phone(frame)
-
-            print(
-                "EAR:", round(ear,3),
-                "Yaw:", round(yaw,1),
-                "Pitch:", round(pitch,1),
-                "Roll:", round(roll,1),
-                "Gaze:", round(gaze,2),
-                "Phone:", phone
-            )
-
-        cv2.imshow("Webcam", frame)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-cap.release()
-cv2.destroyAllWindows()
+if __name__ == "__main__":
+    main()

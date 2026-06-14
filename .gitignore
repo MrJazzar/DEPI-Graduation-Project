@@ -1,6 +1,32 @@
-.vscode/
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Virtual environments
+venv/
+.env/
+env/
+
+# IDE & OS files
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+
+# YOLO weights (downloaded automatically on first run)
 yolov8n.pt
 
+# Large model & data files — do NOT commit these
+models/model.pkl
+models/scaler.pkl
+models/face_landmarker.task
+data/face_videos/
+data/processed/
 data/dataset/
-data/features.csv
+
+# Keep folder structure in git
+!data/face_videos/.gitkeep
+!data/processed/.gitkeep
+!data/dataset/.gitkeep
