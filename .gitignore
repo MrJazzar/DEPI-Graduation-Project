@@ -30,3 +30,6 @@ data/dataset/
 !data/face_videos/.gitkeep
 !data/processed/.gitkeep
 !data/dataset/.gitkeep
+# Webapp local data
+webapp/database/*.db
+webapp/embeddings/*.pkl
