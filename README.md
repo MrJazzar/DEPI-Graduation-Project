@@ -40,7 +40,7 @@ The AI pipeline simultaneously detects multiple students, recognizes their ident
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/DEPI-Graduation-Project.git
+git clone https://github.com/MrJazzar/DEPI-Graduation-Project.git
 cd DEPI-Graduation-Project
 ```
 
@@ -59,8 +59,8 @@ Create a `models/` folder in the root directory (if not exists) and place the fo
 
 | File | Purpose |
 |---|---|
-| `model.pkl` | Pre-trained Random Forest classifier for Focus Detection. |
-| `scaler.pkl` | StandardScaler fitted on the training dataset. |
+| `model.pkl` | Pre-trained Random Forest classifier for Focus Detection. ([Download Here](https://drive.google.com/drive/folders/1h2tVsqJurCPQygQ97oXnntjUb_Q4JbaY?usp=sharing)) |
+| `scaler.pkl` | StandardScaler fitted on the training dataset. ([Download Here](https://drive.google.com/drive/folders/1h2tVsqJurCPQygQ97oXnntjUb_Q4JbaY?usp=sharing)) |
 | `face_landmarker.task` | MediaPipe FaceLandmarker weights. ([Download Here](https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task)) |
 
 ### 4. Launch the Web App
