@@ -12,3 +12,4 @@ tensorflow==2.21.0
 streamlit==1.53.0
 streamlit-webrtc==0.72.2
 av==16.1.0
+requests==2.32.3

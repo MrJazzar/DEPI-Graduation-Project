@@ -1,0 +1,256 @@
+{
+  "name": "DEPI Graduation Project",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5e589227-75ab-4299-a983-5c1ff3765414",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c2364dcb-cb6c-4995-821a-c40ec106cc4a",
+      "name": "Webhook",
+      "webhookId": "5e589227-75ab-4299-a983-5c1ff3765414"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.email }}",
+        "subject": "={{ JSON.parse($json.text).subject }}",
+        "emailType": "text",
+        "message": "={{ JSON.parse($json.text).message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        64
+      ],
+      "id": "f9d2fb91-f594-40e4-8b23-711852017011",
+      "name": "Send a message",
+      "webhookId": "ae2aecae-77d5-41c3-8882-6b1301634100",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "1A2vRkAarL0bPYZu",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1BrVAgZO9X4CIqROM73evTMaJaJySrgl-HgHeYZEiXxg",
+          "mode": "list",
+          "cachedResultName": "DEPI Graduation Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BrVAgZO9X4CIqROM73evTMaJaJySrgl-HgHeYZEiXxg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BrVAgZO9X4CIqROM73evTMaJaJySrgl-HgHeYZEiXxg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Username": "={{ $json.body.username }}",
+            "Full Name": "={{ $json.body.full_name }}",
+            "Email": "={{ $json.body.email }}",
+            "Join Time": "={{ $json.body.join_time }}",
+            "Leave Time": "={{ $json.body.leave_time }}",
+            "Duration (Mins)": "={{ $json.body.duration_minutes }}"
+          },
+          "matchingColumns": [
+            "Username"
+          ],
+          "schema": [
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Join Time",
+              "displayName": "Join Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Leave Time",
+              "displayName": "Leave Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Duration (Mins)",
+              "displayName": "Duration (Mins)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        -144
+      ],
+      "id": "a0347ec0-67d6-41b8-895f-bb6800785bec",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "BbWe82QHThA1HtEr",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        304,
+        352
+      ],
+      "id": "01664cb4-dd3e-417e-a228-4bdc35dccd13",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "ILlxgFNhd6SsgjKZ",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate an email using the following session information:\n\nFull Name: {{ $json.body.full_name }}\nUsername: {{ $json.body.username }}\nEvent: {{ $json.body.event }}\nJoin Time: {{ $json.body.join_time }}\nLeave Time: {{ $json.body.leave_time }}\nDuration: {{ $json.body.duration_minutes }} minutes\nFocus Percentage: {{ $json.body.focus_percentage }}%\nSpoof Attempts: {{ $json.body.spoof_attempts }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a professional customer communication specialist.\n\nWrite a polished, human-friendly email notifying a user that their monitoring session has been completed.\n\nRequirements:\n- Address the recipient by their full name.\n- Start with a warm greeting.\n- Clearly state that the monitoring session has been completed successfully.\n- Present the session details in a clean, easy-to-read format using bullet points.\n- Include:\n  • Join Time\n  • Leave Time\n  • Session Duration\n  • Focus Percentage\n  • Spoof Attempts\n- If spoof_attempts is 0, reassure the user that no suspicious activity was detected.\n- If spoof_attempts is greater than 0, politely warn the user that suspicious activity was detected.\n- If the focus percentage is below 70%, encourage the user to improve concentration during future sessions.\n- End with a professional closing thanking the user for using the system.\n- Keep the email between 120 and 180 words.\n- Use a formal yet friendly tone.\n\nReturn ONLY valid JSON in this format:\n\n{\n  \"subject\": \"string\",\n  \"message\": \"string\"\n}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        320,
+        80
+      ],
+      "id": "b6770ca5-9d1c-41d3-a3d3-9c480a867647",
+      "name": "Basic LLM Chain"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "09429fa2-a0e2-414f-be4e-cad7470aae40",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7cb600660f714578ecdce0ef9f045515e8e0f64557fc8b7708d40da4793f5c9b"
+  },
+  "nodeGroups": [],
+  "id": "KRj0DU3s9tsSlZ7D",
+  "tags": []
+}

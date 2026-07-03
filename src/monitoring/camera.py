@@ -240,6 +240,11 @@ class CameraMonitor:
     def run(self) -> None:
         """Open the webcam, calibrate, then start the multi-person monitoring loop."""
         cap = cv2.VideoCapture(0)
+        
+        # 🚀 تقليل جودة الكاميرا لتسريع المعالجة ومنع التقطيع (Lag)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        
         self._calibrate(cap)
 
         print("\n[CameraMonitor] Multi-person monitoring started -- press 'q' to stop.\n")

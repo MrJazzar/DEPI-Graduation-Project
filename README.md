@@ -32,6 +32,7 @@ The AI pipeline simultaneously detects multiple students, recognizes their ident
 - 📱 **Context-Aware Phone Detection:** Uses YOLOv8 to detect phones and strictly matches the phone to the nearest person holding it.
 - 🛡️ **Anti-Spoofing (Liveness):** Dual-threshold blink detection and head-pose analysis ensure the person is real and not a static photo.
 - 📊 **Advanced Analytics:** Real-time metrics and post-session interactive charts (Focus breakdown, session duration, spoof attempts).
+- 🤖 **Automated Workflows:** Integrates with n8n to instantly log attendance to Google Sheets and send personalized AI-drafted emails to students upon lecture completion.
 
 ---
 
@@ -63,7 +64,13 @@ Create a `models/` folder in the root directory (if not exists) and place the fo
 | `scaler.pkl` | StandardScaler fitted on the training dataset. ([Download Here](https://drive.google.com/drive/folders/1h2tVsqJurCPQygQ97oXnntjUb_Q4JbaY?usp=sharing)) |
 | `face_landmarker.task` | MediaPipe FaceLandmarker weights. ([Download Here](https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task)) |
 
-### 4. Launch the Web App
+### 4. Setup n8n Automation (Optional)
+
+To enable automated emails and attendance logging:
+1. Import the provided `n8n/attendance_automation_workflow.json` into your [n8n](https://n8n.io) instance.
+2. Update the webhook URL in `webapp/pages/5_join_lecture.py` with your n8n Production/Test Webhook URL.
+
+### 5. Launch the Web App
 
 Start the Streamlit server:
 
@@ -128,6 +135,7 @@ DEPI-Graduation-Project/
 │   └── analytics/                # Report & Chart generator logic
 │
 ├── models/                       # Pre-trained model weights (.pkl, .task)
+├── n8n/                          # n8n workflow exports (.json)
 ├── data/                         # CSV session logs, datasets
 ├── requirements.txt              # Project dependencies
 └── .gitignore                    # Ignored files for safe cloning
@@ -146,6 +154,7 @@ DEPI-Graduation-Project/
 - **Object Detection:** [YOLOv8](https://ultralytics.com/) (Ultralytics)
 - **Machine Learning:** [Scikit-Learn](https://scikit-learn.org/) (Random Forest)
 - **Data Analytics:** Pandas, Matplotlib, NumPy
+- **Automation & Integrations:** [n8n](https://n8n.io/), `requests`
 
 ---
 

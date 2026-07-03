@@ -8,10 +8,8 @@ def start_ai_session():
     """
     webapp_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     project_root = os.path.dirname(webapp_dir)
-    src_dir = os.path.join(project_root, "src")
-    
-    if src_dir not in sys.path:
-        sys.path.insert(0, src_dir)
+    if project_root not in sys.path:
+        sys.path.insert(0, project_root)
         
     try:
         from src.main import main as run_monitoring
