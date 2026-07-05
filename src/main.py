@@ -58,6 +58,7 @@ def main() -> None:
         reporter=reporter,
         landmarker_path=paths["landmarker"],
         csv_output_path=session_csv,
+        samples_per_second=3,
     )
     monitor.run()
 

@@ -25,10 +25,10 @@ class FaceRecognizer:
 
     Args:
         embeddings_path: Path to the .pkl file containing stored embeddings.
-        threshold: Maximum cosine distance to accept a match (default 0.65).
+        threshold: Maximum cosine distance to accept a match (default 0.9).
     """
 
-    def __init__(self, embeddings_path: str, threshold: float = 0.65):
+    def __init__(self, embeddings_path: str, threshold: float = 0.9):
         self.threshold = threshold
         self.embeddings: dict = {}
         self._load_embeddings(embeddings_path)
